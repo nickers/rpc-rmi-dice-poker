@@ -11,6 +11,6 @@ import java.rmi.RemoteException;
  * To change this template use File | Settings | File Templates.
  */
 public interface Server extends Remote {
-    public Game connectToGame() throws RemoteException;
+    public GameParticipant connectToGame() throws RemoteException;
     public int gamesCount() throws RemoteException;
 }

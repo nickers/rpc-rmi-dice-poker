@@ -11,30 +11,10 @@ import java.util.Set;
  * Time: 01:10:43
  * To change this template use File | Settings | File Templates.
  */
-public interface Game {
-    /**
-     * 
-     * @return
-     * @throws RemoteException
-     */
-    public GameState waitForGameStateChange() throws RemoteException;
-
-    /**
-     * 
-     * @param dices
-     * @throws RemoteException
-     */
-    public void throwDices(Set<Integer> dices) throws RemoteException;
-
-    /**
-     * 
-     * @throws RemoteException
-     */
-    public void finishRound() throws RemoteException;
-
-    /**
-     * 
-     * @throws RemoteException
-     */
-    public void finishGame() throws RemoteException;
+public interface Game  {
+    boolean addPlayer(GameParticipant player);
+    void waitForStateChange(GameState previous) ;
+    GameState getGameState();
+    void leaveGame(GameParticipant player);
+    void setPlayerDice(GameParticipant player, Set<Integer> dices);
 }

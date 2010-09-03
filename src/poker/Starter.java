@@ -22,7 +22,8 @@ public class Starter {
         try {
             String name = "//localhost:1099/Compute";
             Server serv = (Server) Naming.lookup(name);
-            serv.connectToGame().waitForGameStateChange().dupa();
+            serv.connectToGame().waitForStateChange();
+            //serv.connectToGame().waitForGameStateChange().dupa();
             System.out.println("--done--");
         } catch (Exception e) {
             e.printStackTrace();
