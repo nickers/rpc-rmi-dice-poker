@@ -49,7 +49,7 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
     }
 
     public int gamesCount() throws RemoteException {
-        return 0;  //To change body of implemented methods use File | Settings | File Templates.
+        return 0;
     }
     
     public static void main(String[] args) {

@@ -11,24 +11,39 @@ import java.util.Set;
  * Time: 01:11:18
  * To change this template use File | Settings | File Templates.
  */
-public class GameImpl extends UnicastRemoteObject implements Game {
-    public GameImpl() throws RemoteException {
-        System.out.println("Game::init()");
+public class GameImpl implements Game {
+    private GameParticipant players[] = new GameParticipant[2];
+
+    public GameImpl() {
     }
 
-    public GameState waitForGameStateChange() throws RemoteException {
-        return new GameState();
+    public boolean addPlayer(GameParticipant player) {
+        int i = 0;
+        while (i<this.players.length) {
+            if (this.players[i] == null) {
+                this.players[i] = player;
+                return true;
+            }
+            i++;
+        }
+        return false;
     }
 
-    public void throwDices(Set<Integer> dices) throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public synchronized void waitForStateChange(GameState previous) {
+        try {
+            this.wait();
+        } catch (InterruptedException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
-    public void finishRound() throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public GameState getGameState() {
+        return null;
     }
 
-    public void finishGame() throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
+    public void leaveGame(GameParticipant player) {
+    }
+
+    public void setPlayerDice(GameParticipant player, Set<Integer> dices) {
     }
 }
