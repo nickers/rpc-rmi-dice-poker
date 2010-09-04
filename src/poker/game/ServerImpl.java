@@ -32,20 +32,27 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
      * @return Game instance to which player should connect.
      * @throws RemoteException
      */
-    public Game connectToGame() throws RemoteException {
+    public GameParticipant connectToGame() throws RemoteException {
+        System.out.print("Server::connectToGame()...");
         Game game = this.onePlayerGames.poll();
 
         if (game==null) {
             synchronized (this.onePlayerGames) {
                 game = this.onePlayerGames.poll();
                 if (game==null) {
+                    System.out.print("new game created...");
                     game = new GameImpl();
                     this.onePlayerGames.add(game);
                 }
             }
         }
 
-        return game;
+        System.out.println("connected");
+        // TODO usunąć zależność kołową
+        GameParticipant part = new GameParticipantImpl(game);
+        game.addPlayer(part);
+
+        return part;
     }
 
     public int gamesCount() throws RemoteException {

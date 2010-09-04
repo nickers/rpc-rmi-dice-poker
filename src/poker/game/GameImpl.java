@@ -3,6 +3,7 @@ package poker.game;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Set;
+import poker.game.GameState.GameParticipantState;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,8 +14,13 @@ import java.util.Set;
  */
 public class GameImpl implements Game {
     private GameParticipant players[] = new GameParticipant[2];
+    private GameState.GameParticipantState playersState[] = new GameState.GameParticipantState[2];
+    private GameState gameState = new GameState();
 
     public GameImpl() {
+        for (int i=0; i<this.playersState.length; i++) {
+            this.playersState[i] = this.gameState.new GameParticipantState();
+        }
     }
 
     public boolean addPlayer(GameParticipant player) {
@@ -26,24 +32,35 @@ public class GameImpl implements Game {
             }
             i++;
         }
+        this.gameState.changed();
         return false;
     }
 
     public synchronized void waitForStateChange(GameState previous) {
         try {
-            this.wait();
+            if (this.gameState.version==previous.version) {
+                this.wait();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
     }
 
-    public GameState getGameState() {
-        return null;
+    public GameState getGameState(GameParticipant player) {
+        return this.gameState.clone();
     }
 
     public void leaveGame(GameParticipant player) {
+        this.gameState.changed();
     }
 
-    public void setPlayerDice(GameParticipant player, Set<Integer> dices) {
+    public void setPlayerDice(GameParticipant player, int dice[]) {
+        GameState.GameParticipantState partState = null;
+        for (int i=0; i<this.players.length; i++) {
+            if (this.players[i]==player) {
+
+            }
+        }
+        this.gameState.changed();
     }
 }

@@ -9,28 +9,53 @@ import java.io.Serializable;
  * Time: 01:29:31
  * To change this template use File | Settings | File Templates.
  */
-public class GameState implements Serializable {
+public class GameState implements Serializable, Cloneable {
+
+    /** GameState internal **/
+    public int version = 0;
+
     /* game params */
     public final int diceAmount = 5;
     public final int roundsMax = 3;
     public boolean gameFinished = false;
+
+    public class GameParticipantState implements Serializable, Cloneable {
+        public int score = 0;
+        public int dice[] = new int[diceAmount];
+        public int roundNumber = 0;
+        public boolean acceptedRound = false;
+
+        @Override
+        protected GameParticipantState clone() {
+            GameParticipantState c = new GameParticipantState();
+            c.score  = this.score;
+            c.dice = this.dice.clone();
+            c.roundNumber = this.roundNumber;
+            c.acceptedRound = this.acceptedRound;
+            return c;
+        }
+    };
     
     /* THIS player info */
-    public int playerScore = 0;
-    public int playerDice[] = new int[diceAmount];
-    public int playerRoundNumber = 0;
-    public boolean playerAcceptedRound = false;
+    public GameParticipantState player = new GameParticipantState();
     
     /* second player info */
-    public int enemyScore = 0;
-    public int enemyDice[] = new int[diceAmount];
-    public int enemyRoundNumber = 0;
-    public boolean enemyAcceptedRound = false;
+    public GameParticipantState enemy = new GameParticipantState();
     
     public GameState() {
     }
     
-    public void dupa() {
-        System.out.println("dupa");
+    public synchronized void changed() {
+        version++;
     }
+
+    @Override
+    protected GameState clone() {
+        GameState c = new GameState();
+        c.gameFinished = this.gameFinished;
+        c.player = this.player.clone();
+        c.enemy = this.enemy.clone();
+        return c;
+    }
+
 }

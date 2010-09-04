@@ -14,7 +14,7 @@ import java.util.Set;
 public interface Game  {
     boolean addPlayer(GameParticipant player);
     void waitForStateChange(GameState previous) ;
-    GameState getGameState();
+    GameState getGameState(GameParticipant player);
     void leaveGame(GameParticipant player);
-    void setPlayerDice(GameParticipant player, Set<Integer> dices);
+    void setPlayerDice(GameParticipant player, int dice[]);
 }
