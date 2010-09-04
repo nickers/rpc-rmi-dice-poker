@@ -63,7 +63,7 @@
                   <color color="-1"/>
                 </border>
                 <children>
-                  <component id="46d45" class="javax.swing.JButton" binding="die1">
+                  <component id="b41a8" class="javax.swing.JToggleButton" binding="die1">
                     <constraints>
                       <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="1" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
@@ -76,7 +76,7 @@
                       <text value="K1"/>
                     </properties>
                   </component>
-                  <component id="378ce" class="javax.swing.JButton" binding="button3" default-binding="true">
+                  <component id="af9a9" class="javax.swing.JToggleButton" binding="die5">
                     <constraints>
                       <grid row="0" column="4" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
@@ -90,7 +90,7 @@
                       <text value="K2"/>
                     </properties>
                   </component>
-                  <component id="1ddab" class="javax.swing.JButton" binding="button4" default-binding="true">
+                  <component id="b9236" class="javax.swing.JToggleButton" binding="die4">
                     <constraints>
                       <grid row="0" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
@@ -102,7 +102,7 @@
                       <text value="Button"/>
                     </properties>
                   </component>
-                  <component id="9cb0e" class="javax.swing.JButton" binding="die2">
+                  <component id="3a1e5" class="javax.swing.JToggleButton" binding="die2">
                     <constraints>
                       <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
@@ -114,7 +114,7 @@
                       <text value="Button"/>
                     </properties>
                   </component>
-                  <component id="4fef8" class="javax.swing.JButton" binding="button6" default-binding="true">
+                  <component id="2a0b1" class="javax.swing.JToggleButton" binding="die3">
                     <constraints>
                       <grid row="0" column="2" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
@@ -139,7 +139,7 @@
                   <text value="TY"/>
                 </properties>
               </component>
-              <component id="d1d5c" class="javax.swing.JButton" binding="throwDices">
+              <component id="d1d5c" class="javax.swing.JButton" binding="throwDice">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
                   <gridbag weightx="0.0" weighty="0.0"/>

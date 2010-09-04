@@ -1,6 +1,7 @@
 package poker.gui;
 
 import poker.game.GameParticipant;
+import poker.game.GameState;
 import poker.game.Server;
 
 import javax.swing.*;
@@ -11,6 +12,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.Naming;
 import java.rmi.RemoteException;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -21,7 +24,33 @@ import java.rmi.RemoteException;
  */
 public class PokerUI implements ActionListener {
 
+    private class ListenerThread extends Thread {
+        private GameParticipant part = null;
+        private PokerUI gui = null;
+        public ListenerThread(GameParticipant part, PokerUI gui) {
+            this.part = part;
+            this.gui = gui;
+        }
+        @Override
+        public void run() {
+            while(!this.isInterrupted()) {
+                try {
+                    System.out.println(" - wait for change");
+                    GameState state = part.waitForGameStateChange();
+                    JToggleButton dice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
+                    for (int i=0; i<dice.length; i++) {
+                        dice[i].setText(String.format("%d",state.player.dice[i]));
+                        System.out.println(String.format("#%d = %d",i, state.player.dice[i]));
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    };
+
     private GameParticipant game = null;
+    private Thread gameStacheListener = null;
     private Server serv = null;
 
     public PokerUI() {
@@ -31,14 +60,22 @@ public class PokerUI implements ActionListener {
 
     public void actionPerformed(ActionEvent act) {
         try {
-        System.out.println("Command received: " + act.getActionCommand());
+            System.out.println("Command received: " + act.getActionCommand());
 
-        if ("new_game".equals(act.getActionCommand())) {
-            if (this.game!=null) {
-                this.game.finishGame();
+            if ("new_game".equals(act.getActionCommand())) {
+                this.stopGame();
+                this.startGame();
             }
-            game = serv.connectToGame();
-        }
+
+            if ("throw_dice".equals(act.getActionCommand())) {
+                Set<Integer> dice = new TreeSet<Integer>();
+                JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
+                for (int i=0; i<d.length; i++){
+                    if (d[i].isSelected()) dice.add(i);
+                }
+                game.throwDices(dice);
+            }
+            
         } catch (RemoteException e) {
             e.printStackTrace();
         }
@@ -52,10 +89,42 @@ public class PokerUI implements ActionListener {
             System.err.println("Can't connect to game server.");
         }
 
-        newGame.setActionCommand("new_game");
-        newGame.addActionListener(this);
+        this.newGame.setActionCommand("new_game");
+        this.newGame.addActionListener(this);
+
+        this.throwDice.setActionCommand("throw_dice");
+        this.throwDice.addActionListener(this);
+
     }
 
+    private void stopGame() {
+        if (this.game!=null) {
+            try {
+                this.game.finishGame();
+            } catch(Exception e) {
+                e.printStackTrace();
+            }
+            this.game = null;
+
+            try {
+                this.gameStacheListener.interrupt();
+                this.gameStacheListener.join(10);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            this.gameStacheListener = null;
+        }
+    }
+
+    private void startGame() {
+        try {
+            this.game = serv.connectToGame();
+            this.gameStacheListener = new ListenerThread(this.game, this);
+            this.gameStacheListener.start();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
 
     public JPanel getMainPanel(){
         return this.mainPanel;
@@ -71,13 +140,13 @@ public class PokerUI implements ActionListener {
         gamePanel = new JPanel();
         youPanel = new JPanel();
         JPanel panel1 = new JPanel();
-        die1 = new JButton();
-        button3 = new JButton();
-        button4 = new JButton();
-        die2 = new JButton();
-        button6 = new JButton();
+        die1 = new JToggleButton();
+        die5 = new JToggleButton();
+        die4 = new JToggleButton();
+        die2 = new JToggleButton();
+        die3 = new JToggleButton();
         JLabel label1 = new JLabel();
-        throwDices = new JButton();
+        throwDice = new JButton();
         finishPart = new JButton();
         oponentPanel = new JPanel();
         JPanel panel2 = new JPanel();
@@ -147,23 +216,23 @@ public class PokerUI implements ActionListener {
                             GridBagConstraints.NORTH, GridBagConstraints.NONE,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- button3 ----
-                        button3.setText("K2");
-                        button3.setMaximumSize(new Dimension(50, 50));
-                        button3.setRolloverEnabled(true);
-                        button3.setOpaque(true);
-                        button3.setMinimumSize(new Dimension(50, 50));
-                        button3.setPreferredSize(new Dimension(50, 50));
-                        panel1.add(button3, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
+                        //---- die5 ----
+                        die5.setText("K2");
+                        die5.setMaximumSize(new Dimension(50, 50));
+                        die5.setRolloverEnabled(true);
+                        die5.setOpaque(true);
+                        die5.setMinimumSize(new Dimension(50, 50));
+                        die5.setPreferredSize(new Dimension(50, 50));
+                        panel1.add(die5, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- button4 ----
-                        button4.setText("Button");
-                        button4.setMaximumSize(new Dimension(50, 50));
-                        button4.setMinimumSize(new Dimension(50, 50));
-                        button4.setPreferredSize(new Dimension(50, 50));
-                        panel1.add(button4, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
+                        //---- die4 ----
+                        die4.setText("Button");
+                        die4.setMaximumSize(new Dimension(50, 50));
+                        die4.setMinimumSize(new Dimension(50, 50));
+                        die4.setPreferredSize(new Dimension(50, 50));
+                        panel1.add(die4, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
@@ -176,12 +245,12 @@ public class PokerUI implements ActionListener {
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- button6 ----
-                        button6.setText("Button");
-                        button6.setMaximumSize(new Dimension(50, 50));
-                        button6.setMinimumSize(new Dimension(50, 50));
-                        button6.setPreferredSize(new Dimension(50, 50));
-                        panel1.add(button6, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                        //---- die3 ----
+                        die3.setText("Button");
+                        die3.setMaximumSize(new Dimension(50, 50));
+                        die3.setMinimumSize(new Dimension(50, 50));
+                        die3.setPreferredSize(new Dimension(50, 50));
+                        panel1.add(die3, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
                     }
@@ -197,11 +266,11 @@ public class PokerUI implements ActionListener {
                         GridBagConstraints.NORTHWEST, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0));
 
-                    //---- throwDices ----
-                    throwDices.setText("Rzut");
-                    throwDices.setVerticalAlignment(0);
-                    throwDices.setPreferredSize(new Dimension(75, 50));
-                    youPanel.add(throwDices, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                    //---- throwDice ----
+                    throwDice.setText("Rzut");
+                    throwDice.setVerticalAlignment(0);
+                    throwDice.setPreferredSize(new Dimension(75, 50));
+                    youPanel.add(throwDice, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0));
 
@@ -302,12 +371,12 @@ public class PokerUI implements ActionListener {
     private JPanel menuPanel;
     private JPanel gamePanel;
     private JPanel youPanel;
-    private JButton die1;
-    private JButton button3;
-    private JButton button4;
-    private JButton die2;
-    private JButton button6;
-    private JButton throwDices;
+    private JToggleButton die1;
+    private JToggleButton die2;
+    private JToggleButton die3;
+    private JToggleButton die4;
+    private JToggleButton die5;
+    private JButton throwDice;
     private JButton finishPart;
     private JPanel oponentPanel;
     private JToggleButton a1ToggleButton;

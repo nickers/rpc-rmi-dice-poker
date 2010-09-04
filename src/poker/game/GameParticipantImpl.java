@@ -43,7 +43,8 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         int newDice[] = this.gameState.player.dice.clone();
         for (Integer dieNr : dice) {
             if (dieNr<newDice.length) {
-                newDice[dieNr] = r.nextInt(6);
+                newDice[dieNr] = r.nextInt(6)+1; // <1;6>
+                System.out.println(String.format(" rolling for die %d: %d", dieNr, newDice[dieNr]));
             }
         }
         game.setPlayerDice(this, newDice);
