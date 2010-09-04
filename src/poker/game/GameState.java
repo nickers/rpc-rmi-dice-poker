@@ -46,12 +46,14 @@ public class GameState implements Serializable, Cloneable {
     }
     
     public synchronized void changed() {
-        version++;
+        this.version++;
+        System.out.println("new state version: "+this.version);
     }
 
     @Override
     protected GameState clone() {
         GameState c = new GameState();
+        c.version = this.version;
         c.gameFinished = this.gameFinished;
         c.player = this.player.clone();
         c.enemy = this.enemy.clone();

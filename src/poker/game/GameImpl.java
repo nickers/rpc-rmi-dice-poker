@@ -34,12 +34,13 @@ public class GameImpl extends UnicastRemoteObject implements Game {
             }
             i++;
         }
-        this.gameState.changed();
+        this.gameStateChanged();
         return false;
     }
 
     public synchronized void waitForStateChange(GameState previous)  throws RemoteException{
         try {
+            System.out.println("KURWA: " + this.gameState.version + ":" + previous.version);
             if (this.gameState.version==previous.version) {
                 this.wait();
             }
@@ -49,27 +50,31 @@ public class GameImpl extends UnicastRemoteObject implements Game {
     }
 
     public GameState getGameState(GameParticipant player)  throws RemoteException{
-        return this.gameState.clone();
+        GameState gs = this.gameState.clone();
+        gs.player = this.getParticipantState(player);
+        gs.enemy = (this.playersState[0]==gs.player ? this.playersState[1] : this.playersState[0]);
+        return gs;
     }
 
     public void leaveGame(GameParticipant player)  throws RemoteException{
         for (int i=0; i<this.players.length; i++) {
             if (this.players[i]==player) {
                 this.players[i] = null;
-                this.gameState.changed();
+                this.gameStateChanged();
                 return;
             }
         }
     }
 
     public void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException {
+        System.out.println("dice set: " + dice.toString());
         GameParticipantState part = this.getParticipantState(player);
         if (!part.acceptedRound && part.roundNumber<this.gameState.roundsMax) {
             synchronized(part) {
                 part.dice = dice;
                 part.roundNumber++;
                 if (!this.playGame()) {
-                    this.gameState.changed();
+                    this.gameStateChanged();
                 }
                 part.acceptedRound = (part.roundNumber>=this.gameState.roundsMax);
             }
@@ -79,7 +84,7 @@ public class GameImpl extends UnicastRemoteObject implements Game {
     public void acceptRound(GameParticipant player) throws RemoteException {
         this.getParticipantState(player).acceptedRound = true;
         if (!this.playGame()) {
-            this.gameState.changed();
+            this.gameStateChanged();
         }
     }
 
@@ -98,5 +103,13 @@ public class GameImpl extends UnicastRemoteObject implements Game {
      */
     private boolean playGame() {
         return false;
+    }
+
+    private void gameStateChanged() {
+        System.out.println("GameStateChanged!");
+        this.gameState.changed();
+        synchronized(this) {
+            this.notifyAll();
+        }
     }
 }

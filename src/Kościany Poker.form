@@ -25,7 +25,7 @@
             </clientProperties>
             <border type="line" title-position="2"/>
             <children>
-              <component id="754e5" class="javax.swing.JButton" binding="button1" default-binding="true">
+              <component id="754e5" class="javax.swing.JButton" binding="newGame">
                 <constraints/>
                 <properties>
                   <text value="&amp;Button"/>

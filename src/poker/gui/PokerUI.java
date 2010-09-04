@@ -1,9 +1,16 @@
 package poker.gui;
 
+import poker.game.GameParticipant;
+import poker.game.Server;
+
 import javax.swing.*;
 import javax.swing.border.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.rmi.Naming;
+import java.rmi.RemoteException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,10 +19,46 @@ import java.awt.*;
  * Time: 16:21:33
  * To change this template use File | Settings | File Templates.
  */
-public class PokerUI {
+public class PokerUI implements ActionListener {
+
+    private GameParticipant game = null;
+    private Server serv = null;
 
     public PokerUI() {
         initComponents();
+        setMyFunctions();
+    }
+
+    public void actionPerformed(ActionEvent act) {
+        try {
+        System.out.println("Command received: " + act.getActionCommand());
+
+        if ("new_game".equals(act.getActionCommand())) {
+            if (this.game!=null) {
+                this.game.finishGame();
+            }
+            game = serv.connectToGame();
+        }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void setMyFunctions() {
+        try {
+            String name = "//localhost:1099/Compute";
+            this.serv = (Server) Naming.lookup(name);
+        } catch (Exception e) {
+            System.err.println("Can't connect to game server.");
+        }
+
+        newGame.setActionCommand("new_game");
+        newGame.addActionListener(this);
+    }
+
+
+    public JPanel getMainPanel(){
+        return this.mainPanel;
     }
 
     private void initComponents() {
@@ -24,7 +67,7 @@ public class PokerUI {
         mainPanel = new JPanel();
         menuPanel = new JPanel();
         JToolBar toolBar1 = new JToolBar();
-        button1 = new JButton();
+        newGame = new JButton();
         gamePanel = new JPanel();
         youPanel = new JPanel();
         JPanel panel1 = new JPanel();
@@ -70,9 +113,9 @@ public class PokerUI {
                     toolBar1.setBorder(new TitledBorder(LineBorder.createBlackLineBorder(), ""));
 
                     //---- button1 ----
-                    button1.setText("Button");
-                    button1.setMnemonic('B');
-                    toolBar1.add(button1);
+                    newGame.setText("Button");
+                    newGame.setMnemonic('B');
+                    toolBar1.add(newGame);
                 }
                 menuPanel.add(toolBar1, BorderLayout.CENTER);
             }
@@ -257,7 +300,6 @@ public class PokerUI {
     // Generated using JFormDesigner Evaluation license - unknown
     private JPanel mainPanel;
     private JPanel menuPanel;
-    private JButton button1;
     private JPanel gamePanel;
     private JPanel youPanel;
     private JButton die1;
@@ -273,5 +315,6 @@ public class PokerUI {
     private JToggleButton a5ToggleButton;
     private JToggleButton a3ToggleButton;
     private JToggleButton a2ToggleButton;
+    private JButton newGame;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

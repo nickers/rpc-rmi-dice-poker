@@ -21,12 +21,19 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
 
     public GameParticipantImpl(Game game) throws RemoteException {
         this.game = game;
+        this.gameState = new GameState();
     }
 
     public GameState waitForGameStateChange() throws RemoteException {
-        this.game.waitForStateChange(this.gameState);
+        GameState gs = null;
         synchronized (this) {
+            gs = this.gameState;
+        }
+        this.game.waitForStateChange(gs);
+        synchronized (this) {
+            System.out.println("GamePart::old GS: " + this.gameState + ", v=" + this.gameState.version);
             this.gameState = this.game.getGameState(this);
+            System.out.println("GamePart::new GS: " + this.gameState + ", v=" + this.gameState.version);
         }
         return this.gameState;
     }
