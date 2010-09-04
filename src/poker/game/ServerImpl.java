@@ -4,9 +4,7 @@ import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -51,6 +49,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         // TODO usunąć zależność kołową
         GameParticipant part = new GameParticipantImpl(game);
         game.addPlayer(part);
+
+        Set<Integer> set = new TreeSet<Integer>();
+        for (int i=0; i<part.getGameState().diceAmount; i++) {
+            set.add(i);
+        }
+        part.throwDices(set);
 
         return part;
     }

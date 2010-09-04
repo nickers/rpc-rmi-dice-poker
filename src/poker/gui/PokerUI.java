@@ -37,11 +37,17 @@ public class PokerUI implements ActionListener {
                 try {
                     System.out.println(" - wait for change");
                     GameState state = part.waitForGameStateChange();
+
+                    // my dice values
                     JToggleButton dice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
                     for (int i=0; i<dice.length; i++) {
                         dice[i].setText(String.format("%d",state.player.dice[i]));
                         System.out.println(String.format("#%d = %d",i, state.player.dice[i]));
                     }
+
+                    // can i throw dice again
+                    gui.throwDice.setEnabled(!state.player.acceptedRound);
+                    System.out.println("Enabled: " + state.player.acceptedRound);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -73,7 +79,9 @@ public class PokerUI implements ActionListener {
                 for (int i=0; i<d.length; i++){
                     if (d[i].isSelected()) dice.add(i);
                 }
-                game.throwDices(dice);
+                if (!dice.isEmpty()) {
+                    game.throwDices(dice);
+                }
             }
             
         } catch (RemoteException e) {

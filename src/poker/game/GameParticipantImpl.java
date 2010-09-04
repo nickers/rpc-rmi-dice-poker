@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,9 +16,6 @@ import java.util.Set;
 public class GameParticipantImpl extends UnicastRemoteObject implements GameParticipant {
     private Game game = null;
     private GameState gameState = null;
-
-    public GameParticipantImpl() throws RemoteException {
-    }
 
     public GameParticipantImpl(Game game) throws RemoteException {
         this.game = game;

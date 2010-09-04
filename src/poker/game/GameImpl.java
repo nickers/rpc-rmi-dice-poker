@@ -73,10 +73,10 @@ public class GameImpl extends UnicastRemoteObject implements Game {
             synchronized(part) {
                 part.dice = dice;
                 part.roundNumber++;
+                part.acceptedRound = (part.roundNumber>=this.gameState.roundsMax);
                 if (!this.playGame()) {
                     this.gameStateChanged();
                 }
-                part.acceptedRound = (part.roundNumber>=this.gameState.roundsMax);
             }
         }
     }
