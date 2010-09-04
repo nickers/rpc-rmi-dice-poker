@@ -63,9 +63,16 @@ public class GameImpl extends UnicastRemoteObject implements Game {
     }
 
     public void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException {
-        this.getParticipantState(player).dice = dice;
-        if (!this.playGame()) {
-            this.gameState.changed();
+        GameParticipantState part = this.getParticipantState(player);
+        if (!part.acceptedRound && part.roundNumber<this.gameState.roundsMax) {
+            synchronized(part) {
+                part.dice = dice;
+                part.roundNumber++;
+                if (!this.playGame()) {
+                    this.gameState.changed();
+                }
+                part.acceptedRound = (part.roundNumber>=this.gameState.roundsMax);
+            }
         }
     }
 
