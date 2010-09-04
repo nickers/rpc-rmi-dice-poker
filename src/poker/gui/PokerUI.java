@@ -1,8 +1,6 @@
 package poker.gui;
 
-import poker.game.GameParticipant;
-import poker.game.GameState;
-import poker.game.Server;
+import poker.game.*;
 
 import javax.swing.*;
 import javax.swing.border.*;

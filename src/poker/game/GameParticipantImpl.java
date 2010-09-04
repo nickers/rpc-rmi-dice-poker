@@ -2,6 +2,7 @@ package poker.game;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.rmi.server.Unreferenced;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,7 +14,7 @@ import java.util.TreeSet;
  * Time: 16:54:04
  * To change this template use File | Settings | File Templates.
  */
-public class GameParticipantImpl extends UnicastRemoteObject implements GameParticipant {
+public class GameParticipantImpl extends UnicastRemoteObject implements GameParticipant, Unreferenced {
     private Game game = null;
     private GameState gameState = null;
 
@@ -55,5 +56,15 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
 
     public synchronized GameState getGameState() throws RemoteException {
         return this.gameState;
+    }
+
+    public void unreferenced() {
+        System.out.println("Game unreferenced!");   
+        try {
+            this.finishGame();
+        } catch (RemoteException e) {
+            // but who really cares?
+            e.printStackTrace();
+        }
     }
 }
