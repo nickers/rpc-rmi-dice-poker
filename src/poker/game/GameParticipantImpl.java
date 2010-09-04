@@ -29,9 +29,7 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         }
         this.game.waitForStateChange(gs);
         synchronized (this) {
-            System.out.println("GamePart::old GS: " + this.gameState + ", v=" + this.gameState.version);
             this.gameState = this.game.getGameState(this);
-            System.out.println("GamePart::new GS: " + this.gameState + ", v=" + this.gameState.version);
         }
         return this.gameState;
     }
@@ -42,7 +40,6 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         for (Integer dieNr : dice) {
             if (dieNr<newDice.length) {
                 newDice[dieNr] = r.nextInt(6)+1; // <1;6>
-                System.out.println(String.format(" rolling for die %d: %d", dieNr, newDice[dieNr]));
             }
         }
         game.setPlayerDice(this, newDice);

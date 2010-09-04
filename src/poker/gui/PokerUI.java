@@ -38,6 +38,8 @@ public class PokerUI implements ActionListener {
                     System.out.println(" - wait for change");
                     GameState state = part.waitForGameStateChange();
 
+                    System.out.println(" + round accepted: " + state.player.acceptedRound);
+
                     // my dice values
                     JToggleButton myDice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
                     for (int i=0; i<myDice.length; i++) {
@@ -47,6 +49,9 @@ public class PokerUI implements ActionListener {
                     // can i throw dice again
                     gui.throwDice.setEnabled(!state.player.acceptedRound);
                     System.out.println("Enabled: " + state.player.acceptedRound);
+
+                    // round accepted (by user or automaticly)
+                    gui.acceptRound.setEnabled(!state.player.acceptedRound);
 
                     // enemy dice values
                     JToggleButton enemyDice[] = {gui.enemyDice1, gui.enemyDice2, gui.enemyDice3, gui.enemyDice4, gui.enemyDice5};
@@ -73,12 +78,14 @@ public class PokerUI implements ActionListener {
         try {
             System.out.println("Command received: " + act.getActionCommand());
 
+            // start a new game
             if ("new_game".equals(act.getActionCommand())) {
                 this.stopGame();
                 this.startGame();
             }
 
-            if ("throw_dice".equals(act.getActionCommand())) {
+            // throw dice
+            if ("throw_dice".equals(act.getActionCommand()) && game!=null) {
                 Set<Integer> dice = new TreeSet<Integer>();
                 JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
                 for (int i=0; i<d.length; i++){
@@ -87,6 +94,11 @@ public class PokerUI implements ActionListener {
                 if (!dice.isEmpty()) {
                     game.throwDices(dice);
                 }
+            }
+
+            // accept round (dice in actual state)
+            if ("accept_round".equals(act.getActionCommand())) {
+                game.finishRound();
             }
             
         } catch (RemoteException e) {
@@ -107,6 +119,9 @@ public class PokerUI implements ActionListener {
 
         this.throwDice.setActionCommand("throw_dice");
         this.throwDice.addActionListener(this);
+
+        this.acceptRound.setActionCommand("accept_round");
+        this.acceptRound.addActionListener(this);
 
     }
 
@@ -160,7 +175,7 @@ public class PokerUI implements ActionListener {
         die3 = new JToggleButton();
         JLabel label1 = new JLabel();
         throwDice = new JButton();
-        finishPart = new JButton();
+        acceptRound = new JButton();
         oponentPanel = new JPanel();
         JPanel panel2 = new JPanel();
         enemyDice1 = new JToggleButton();
@@ -287,11 +302,11 @@ public class PokerUI implements ActionListener {
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0));
 
-                    //---- finishPart ----
-                    finishPart.setText(" OK ");
-                    finishPart.setVerticalAlignment(0);
-                    finishPart.setPreferredSize(new Dimension(75, 50));
-                    youPanel.add(finishPart, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
+                    //---- acceptRound ----
+                    acceptRound.setText(" OK ");
+                    acceptRound.setVerticalAlignment(0);
+                    acceptRound.setPreferredSize(new Dimension(75, 50));
+                    youPanel.add(acceptRound, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.NONE,
                         new Insets(0, 0, 0, 0), 0, 0));
                 }
@@ -390,7 +405,7 @@ public class PokerUI implements ActionListener {
     private JToggleButton die4;
     private JToggleButton die5;
     private JButton throwDice;
-    private JButton finishPart;
+    private JButton acceptRound;
     private JPanel oponentPanel;
     private JToggleButton enemyDice1;
     private JToggleButton enemyDice2;

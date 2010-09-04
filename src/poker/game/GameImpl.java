@@ -40,7 +40,6 @@ public class GameImpl extends UnicastRemoteObject implements Game {
 
     public synchronized void waitForStateChange(GameState previous)  throws RemoteException{
         try {
-            System.out.println("KURWA: " + this.gameState.version + ":" + previous.version);
             if (this.gameState.version==previous.version) {
                 this.wait();
             }
@@ -106,7 +105,6 @@ public class GameImpl extends UnicastRemoteObject implements Game {
     }
 
     private void gameStateChanged() {
-        System.out.println("GameStateChanged!");
         this.gameState.changed();
         synchronized(this) {
             this.notifyAll();
