@@ -49,19 +49,19 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void waitForStateChange() {
+    public void waitForStateChange() throws RemoteException{
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public synchronized GameState getGameState() {
+    public synchronized GameState getGameState() throws RemoteException {
         return this.gameState;
     }
 
-    public void leaveGame() {
+    public void leaveGame() throws RemoteException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    public void setDice(Set<Integer> dices) {
+    public void setDice(Set<Integer> dices) throws RemoteException {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

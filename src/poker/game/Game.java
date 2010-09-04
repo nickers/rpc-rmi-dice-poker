@@ -1,5 +1,6 @@
 package poker.game;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Set;
@@ -11,10 +12,10 @@ import java.util.Set;
  * Time: 01:10:43
  * To change this template use File | Settings | File Templates.
  */
-public interface Game  {
-    boolean addPlayer(GameParticipant player);
-    void waitForStateChange(GameState previous) ;
-    GameState getGameState(GameParticipant player);
-    void leaveGame(GameParticipant player);
-    void setPlayerDice(GameParticipant player, int dice[]);
+public interface Game extends Remote {
+    boolean addPlayer(GameParticipant player) throws RemoteException;
+    void waitForStateChange(GameState previous)  throws RemoteException;
+    GameState getGameState(GameParticipant player) throws RemoteException;
+    void leaveGame(GameParticipant player) throws RemoteException;
+    void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException;
 }

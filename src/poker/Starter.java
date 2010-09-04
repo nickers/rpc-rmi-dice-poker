@@ -1,5 +1,6 @@
 package poker;
 
+import poker.game.GameParticipant;
 import poker.gui.PokerUI;
 import javax.swing.*;
 import poker.game.Server;
@@ -22,7 +23,7 @@ public class Starter {
         try {
             String name = "//localhost:1099/Compute";
             Server serv = (Server) Naming.lookup(name);
-            serv.connectToGame().waitForStateChange();
+            GameParticipant p = serv.connectToGame();
             //serv.connectToGame().waitForGameStateChange().dupa();
             System.out.println("--done--");
         } catch (Exception e) {

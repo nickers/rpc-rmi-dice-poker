@@ -17,8 +17,8 @@ public interface GameParticipant extends Remote {
     public void finishRound() throws RemoteException;
     public void finishGame() throws RemoteException;
     
-    void waitForStateChange() ;
-    GameState getGameState();
-    void leaveGame();
-    void setDice(Set<Integer> dices);
+    void waitForStateChange() throws RemoteException;
+    GameState getGameState() throws RemoteException;
+    void leaveGame() throws RemoteException;
+    void setDice(Set<Integer> dices) throws RemoteException;
 }
