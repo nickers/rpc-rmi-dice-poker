@@ -39,15 +39,20 @@ public class PokerUI implements ActionListener {
                     GameState state = part.waitForGameStateChange();
 
                     // my dice values
-                    JToggleButton dice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
-                    for (int i=0; i<dice.length; i++) {
-                        dice[i].setText(String.format("%d",state.player.dice[i]));
-                        System.out.println(String.format("#%d = %d",i, state.player.dice[i]));
+                    JToggleButton myDice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
+                    for (int i=0; i<myDice.length; i++) {
+                        myDice[i].setText(String.format("%d",state.player.dice[i]));
                     }
 
                     // can i throw dice again
                     gui.throwDice.setEnabled(!state.player.acceptedRound);
                     System.out.println("Enabled: " + state.player.acceptedRound);
+
+                    // enemy dice values
+                    JToggleButton enemyDice[] = {gui.enemyDice1, gui.enemyDice2, gui.enemyDice3, gui.enemyDice4, gui.enemyDice5};
+                    for (int i=0; i<enemyDice.length; i++) {
+                        enemyDice[i].setText(String.format("%d",state.enemy.dice[i]));
+                    }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -158,11 +163,11 @@ public class PokerUI implements ActionListener {
         finishPart = new JButton();
         oponentPanel = new JPanel();
         JPanel panel2 = new JPanel();
-        a1ToggleButton = new JToggleButton();
-        a4ToggleButton = new JToggleButton();
-        a5ToggleButton = new JToggleButton();
-        a3ToggleButton = new JToggleButton();
-        a2ToggleButton = new JToggleButton();
+        enemyDice1 = new JToggleButton();
+        enemyDice5 = new JToggleButton();
+        enemyDice4 = new JToggleButton();
+        enemyDice3 = new JToggleButton();
+        enemyDice2 = new JToggleButton();
         JLabel label2 = new JLabel();
 
         //======== mainPanel ========
@@ -190,8 +195,8 @@ public class PokerUI implements ActionListener {
                     toolBar1.setBorder(new TitledBorder(LineBorder.createBlackLineBorder(), ""));
 
                     //---- button1 ----
-                    newGame.setText("Button");
-                    newGame.setMnemonic('B');
+                    newGame.setText("Nowa gra");
+                    newGame.setMnemonic('N');
                     toolBar1.add(newGame);
                 }
                 menuPanel.add(toolBar1, BorderLayout.CENTER);
@@ -215,7 +220,7 @@ public class PokerUI implements ActionListener {
                         panel1.setLayout(new GridBagLayout());
 
                         //---- die1 ----
-                        die1.setText("K1");
+                        die1.setText("...");
                         die1.setMaximumSize(new Dimension(50, 50));
                         die1.setRolloverEnabled(true);
                         die1.setMinimumSize(new Dimension(50, 50));
@@ -225,7 +230,7 @@ public class PokerUI implements ActionListener {
                             new Insets(0, 0, 0, 0), 0, 0));
 
                         //---- die5 ----
-                        die5.setText("K2");
+                        die5.setText("...");
                         die5.setMaximumSize(new Dimension(50, 50));
                         die5.setRolloverEnabled(true);
                         die5.setOpaque(true);
@@ -236,7 +241,7 @@ public class PokerUI implements ActionListener {
                             new Insets(0, 0, 0, 0), 0, 0));
 
                         //---- die4 ----
-                        die4.setText("Button");
+                        die4.setText("...");
                         die4.setMaximumSize(new Dimension(50, 50));
                         die4.setMinimumSize(new Dimension(50, 50));
                         die4.setPreferredSize(new Dimension(50, 50));
@@ -245,7 +250,7 @@ public class PokerUI implements ActionListener {
                             new Insets(0, 0, 0, 0), 0, 0));
 
                         //---- die2 ----
-                        die2.setText("Button");
+                        die2.setText("...");
                         die2.setMaximumSize(new Dimension(50, 50));
                         die2.setMinimumSize(new Dimension(50, 50));
                         die2.setPreferredSize(new Dimension(50, 50));
@@ -254,7 +259,7 @@ public class PokerUI implements ActionListener {
                             new Insets(0, 0, 0, 0), 0, 0));
 
                         //---- die3 ----
-                        die3.setText("Button");
+                        die3.setText("...");
                         die3.setMaximumSize(new Dimension(50, 50));
                         die3.setMinimumSize(new Dimension(50, 50));
                         die3.setPreferredSize(new Dimension(50, 50));
@@ -305,50 +310,50 @@ public class PokerUI implements ActionListener {
                         panel2.setBorder(new TitledBorder(new LineBorder(Color.white), ""));
                         panel2.setLayout(new GridBagLayout());
 
-                        //---- a1ToggleButton ----
-                        a1ToggleButton.setPreferredSize(new Dimension(50, 50));
-                        a1ToggleButton.setMinimumSize(new Dimension(50, 50));
-                        a1ToggleButton.setSelected(false);
-                        a1ToggleButton.setMaximumSize(new Dimension(50, 50));
-                        a1ToggleButton.setText("1");
-                        panel2.add(a1ToggleButton, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                        //---- enemyDice1 ----
+                        enemyDice1.setPreferredSize(new Dimension(50, 50));
+                        enemyDice1.setMinimumSize(new Dimension(50, 50));
+                        enemyDice1.setSelected(false);
+                        enemyDice1.setMaximumSize(new Dimension(50, 50));
+                        enemyDice1.setText("...");
+                        panel2.add(enemyDice1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- a4ToggleButton ----
-                        a4ToggleButton.setPreferredSize(new Dimension(50, 50));
-                        a4ToggleButton.setMinimumSize(new Dimension(50, 50));
-                        a4ToggleButton.setSelected(false);
-                        a4ToggleButton.setMaximumSize(new Dimension(50, 50));
-                        a4ToggleButton.setText("4");
-                        panel2.add(a4ToggleButton, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
+                        //---- enemyDice5 ----
+                        enemyDice5.setPreferredSize(new Dimension(50, 50));
+                        enemyDice5.setMinimumSize(new Dimension(50, 50));
+                        enemyDice5.setSelected(false);
+                        enemyDice5.setMaximumSize(new Dimension(50, 50));
+                        enemyDice5.setText("...");
+                        panel2.add(enemyDice5, new GridBagConstraints(4, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- a5ToggleButton ----
-                        a5ToggleButton.setPreferredSize(new Dimension(50, 50));
-                        a5ToggleButton.setMinimumSize(new Dimension(50, 50));
-                        a5ToggleButton.setMaximumSize(new Dimension(50, 50));
-                        a5ToggleButton.setText("5");
-                        panel2.add(a5ToggleButton, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
+                        //---- enemyDice4 ----
+                        enemyDice4.setPreferredSize(new Dimension(50, 50));
+                        enemyDice4.setMinimumSize(new Dimension(50, 50));
+                        enemyDice4.setMaximumSize(new Dimension(50, 50));
+                        enemyDice4.setText("...");
+                        panel2.add(enemyDice4, new GridBagConstraints(3, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- a3ToggleButton ----
-                        a3ToggleButton.setPreferredSize(new Dimension(50, 50));
-                        a3ToggleButton.setMinimumSize(new Dimension(50, 50));
-                        a3ToggleButton.setMaximumSize(new Dimension(50, 50));
-                        a3ToggleButton.setText("3");
-                        panel2.add(a3ToggleButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
+                        //---- enemyDice3 ----
+                        enemyDice3.setPreferredSize(new Dimension(50, 50));
+                        enemyDice3.setMinimumSize(new Dimension(50, 50));
+                        enemyDice3.setMaximumSize(new Dimension(50, 50));
+                        enemyDice3.setText("...");
+                        panel2.add(enemyDice3, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
 
-                        //---- a2ToggleButton ----
-                        a2ToggleButton.setPreferredSize(new Dimension(50, 50));
-                        a2ToggleButton.setMinimumSize(new Dimension(50, 50));
-                        a2ToggleButton.setMaximumSize(new Dimension(50, 50));
-                        a2ToggleButton.setText("2");
-                        panel2.add(a2ToggleButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                        //---- enemyDice2 ----
+                        enemyDice2.setPreferredSize(new Dimension(50, 50));
+                        enemyDice2.setMinimumSize(new Dimension(50, 50));
+                        enemyDice2.setMaximumSize(new Dimension(50, 50));
+                        enemyDice2.setText("...");
+                        panel2.add(enemyDice2, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
                             GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
                             new Insets(0, 0, 0, 0), 0, 0));
                     }
@@ -387,11 +392,11 @@ public class PokerUI implements ActionListener {
     private JButton throwDice;
     private JButton finishPart;
     private JPanel oponentPanel;
-    private JToggleButton a1ToggleButton;
-    private JToggleButton a4ToggleButton;
-    private JToggleButton a5ToggleButton;
-    private JToggleButton a3ToggleButton;
-    private JToggleButton a2ToggleButton;
+    private JToggleButton enemyDice1;
+    private JToggleButton enemyDice2;
+    private JToggleButton enemyDice3;
+    private JToggleButton enemyDice4;
+    private JToggleButton enemyDice5;
     private JButton newGame;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }
