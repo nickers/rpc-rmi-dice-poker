@@ -53,16 +53,43 @@ public class GameImpl extends UnicastRemoteObject implements Game {
     }
 
     public void leaveGame(GameParticipant player)  throws RemoteException{
-        this.gameState.changed();
+        for (int i=0; i<this.players.length; i++) {
+            if (this.players[i]==player) {
+                this.players[i] = null;
+                this.gameState.changed();
+                return;
+            }
+        }
     }
 
     public void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException {
-        GameState.GameParticipantState partState = null;
+        this.getParticipantState(player).dice = dice;
+        if (!this.playGame()) {
+            this.gameState.changed();
+        }
+    }
+
+    public void acceptRound(GameParticipant player) throws RemoteException {
+        this.getParticipantState(player).acceptedRound = true;
+        if (!this.playGame()) {
+            this.gameState.changed();
+        }
+    }
+
+    private GameParticipantState getParticipantState(GameParticipant player) {
         for (int i=0; i<this.players.length; i++) {
             if (this.players[i]==player) {
-
+                return this.playersState[i];
             }
         }
-        this.gameState.changed();
+        return null;
+    }
+
+    /**
+     * try to compute round results, true if done, false otherwise.
+     * @return
+     */
+    private boolean playGame() {
+        return false;
     }
 }

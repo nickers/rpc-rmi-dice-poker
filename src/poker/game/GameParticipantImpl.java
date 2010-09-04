@@ -43,25 +43,14 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
     }
 
     public void finishRound() throws RemoteException {
+        this.game.acceptRound(this);
     }
 
     public void finishGame() throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void waitForStateChange() throws RemoteException{
-        //To change body of implemented methods use File | Settings | File Templates.
+        this.game.leaveGame(this);
     }
 
     public synchronized GameState getGameState() throws RemoteException {
         return this.gameState;
-    }
-
-    public void leaveGame() throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    public void setDice(Set<Integer> dices) throws RemoteException {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }

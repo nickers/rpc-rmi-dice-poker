@@ -18,4 +18,5 @@ public interface Game extends Remote {
     GameState getGameState(GameParticipant player) throws RemoteException;
     void leaveGame(GameParticipant player) throws RemoteException;
     void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException;
+    void acceptRound(GameParticipant player) throws RemoteException;
 }
