@@ -25,36 +25,61 @@ public class PokerUI implements ActionListener {
     private class ListenerThread extends Thread {
         private GameParticipant part = null;
         private PokerUI gui = null;
+
+        /**
+         *
+         * @param part
+         * @param gui
+         */
         public ListenerThread(GameParticipant part, PokerUI gui) {
             this.part = part;
             this.gui = gui;
         }
+
+        /**
+         *
+         */
         @Override
         public void run() {
             while(!this.isInterrupted()) {
                 try {
-                    System.out.println(" - wait for change");
+                    //System.out.println(" - wait for change");
                     GameState state = part.waitForGameStateChange();
+                    //System.out.println(String.format(" - points -> %d:%d", state.player.score, state.enemy.score));
 
-                    System.out.println(" + round accepted: " + state.player.acceptedRound);
+                    if (state.player!=null) {
+                        // my dice values
+                        JToggleButton myDice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
+                        for (int i=0; i<myDice.length; i++) {
+                            myDice[i].setText(String.format("%d",state.player.dice[i]));
+                        }
 
-                    // my dice values
-                    JToggleButton myDice[] = {gui.die1, gui.die2, gui.die3, gui.die4, gui.die5};
-                    for (int i=0; i<myDice.length; i++) {
-                        myDice[i].setText(String.format("%d",state.player.dice[i]));
+                        // can i throw dice again
+                        gui.throwDice.setEnabled(!state.player.acceptedRound);
+
+                        // round accepted (by user or automaticly)
+                        gui.acceptRound.setEnabled(!state.player.acceptedRound);
                     }
 
-                    // can i throw dice again
-                    gui.throwDice.setEnabled(!state.player.acceptedRound);
-                    System.out.println("Enabled: " + state.player.acceptedRound);
+                    if (state.enemy!=null) {
+                        // enemy dice values
+                        JToggleButton enemyDice[] = {gui.enemyDice1, gui.enemyDice2, gui.enemyDice3, gui.enemyDice4, gui.enemyDice5};
+                        for (int i=0; i<enemyDice.length; i++) {
+                            enemyDice[i].setText(String.format("%d",state.enemy.dice[i]));
+                        }
+                    }
 
-                    // round accepted (by user or automaticly)
-                    gui.acceptRound.setEnabled(!state.player.acceptedRound);
+                    if (state.player!=null && state.enemy!=null) {
+                        String result = String.format("Wynik: %d:%d, Pozostałe rzuty: %d",
+                                state.player.score, state.enemy.score, state.roundsMax-state.player.roundNumber);
+                        titledBorder.setTitle(result);
+                        this.gui.mainPanel.updateUI();
+                        System.out.println(result);
+                    }
 
-                    // enemy dice values
-                    JToggleButton enemyDice[] = {gui.enemyDice1, gui.enemyDice2, gui.enemyDice3, gui.enemyDice4, gui.enemyDice5};
-                    for (int i=0; i<enemyDice.length; i++) {
-                        enemyDice[i].setText(String.format("%d",state.enemy.dice[i]));
+                    if (state.gameFinished) {
+                        JOptionPane.showMessageDialog(this.gui.mainPanel, "Gra została zakończona.", "Koniec gry",
+                                JOptionPane.INFORMATION_MESSAGE);
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -67,11 +92,18 @@ public class PokerUI implements ActionListener {
     private Thread gameStacheListener = null;
     private Server serv = null;
 
+    /**
+     *
+     */
     public PokerUI() {
         initComponents();
         setMyFunctions();
     }
 
+    /**
+     *
+     * @param act
+     */
     public void actionPerformed(ActionEvent act) {
         try {
             System.out.println("Command received: " + act.getActionCommand());
@@ -104,6 +136,9 @@ public class PokerUI implements ActionListener {
         }
     }
 
+    /**
+     *
+     */
     private void setMyFunctions() {
         try {
             String name = "//localhost:1099/Compute";
@@ -123,6 +158,9 @@ public class PokerUI implements ActionListener {
 
     }
 
+    /**
+     *
+     */
     private void stopGame() {
         if (this.game!=null) {
             try {
@@ -142,6 +180,9 @@ public class PokerUI implements ActionListener {
         }
     }
 
+    /**
+     *
+     */
     private void startGame() {
         try {
             this.game = serv.connectToGame();
@@ -152,10 +193,17 @@ public class PokerUI implements ActionListener {
         }
     }
 
+    /**
+     *
+     * @return
+     */
     public JPanel getMainPanel(){
         return this.mainPanel;
     }
 
+    /**
+     *
+     */
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - unknown
@@ -188,11 +236,13 @@ public class PokerUI implements ActionListener {
             mainPanel.setPreferredSize(new Dimension(500, 300));
 
             // JFormDesigner evaluation mark
-            mainPanel.setBorder(new javax.swing.border.CompoundBorder(
-                new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
+            titledBorder = new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
                     "JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
                     javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-                    java.awt.Color.red), mainPanel.getBorder())); mainPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+                    java.awt.Color.red);
+            mainPanel.setBorder(new javax.swing.border.CompoundBorder(titledBorder, mainPanel.getBorder()));
+            
+            mainPanel.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
 
             mainPanel.setLayout(new BorderLayout());
 
@@ -411,5 +461,6 @@ public class PokerUI implements ActionListener {
     private JToggleButton enemyDice4;
     private JToggleButton enemyDice5;
     private JButton newGame;
+    private TitledBorder titledBorder;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 }

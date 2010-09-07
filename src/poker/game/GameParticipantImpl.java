@@ -36,14 +36,7 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
     }
 
     public void throwDices(Set<Integer> dice) throws RemoteException {
-        Random r = new Random();
-        int newDice[] = this.gameState.player.dice.clone();
-        for (Integer dieNr : dice) {
-            if (dieNr<newDice.length) {
-                newDice[dieNr] = r.nextInt(6)+1; // <1;6>
-            }
-        }
-        game.setPlayerDice(this, newDice);
+        game.throwDice(this, dice);
     }
 
     public void finishRound() throws RemoteException {
