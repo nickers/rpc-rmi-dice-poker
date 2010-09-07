@@ -47,7 +47,6 @@ public class GameState implements Serializable, Cloneable {
     
     public synchronized void changed() {
         this.version++;
-        System.out.println("new state version: "+this.version);
     }
 
     @Override

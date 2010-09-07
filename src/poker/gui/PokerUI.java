@@ -74,12 +74,11 @@ public class PokerUI implements ActionListener {
                                 state.player.score, state.enemy.score, state.roundsMax-state.player.roundNumber);
                         titledBorder.setTitle(result);
                         this.gui.mainPanel.updateUI();
-                        System.out.println(result);
                     }
 
                     if (state.gameFinished) {
-                        JOptionPane.showMessageDialog(this.gui.mainPanel, "Gra została zakończona.", "Koniec gry",
-                                JOptionPane.INFORMATION_MESSAGE);
+                        titledBorder.setTitle("Gra została zakończona.");
+                        this.gui.mainPanel.updateUI();
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -89,7 +88,7 @@ public class PokerUI implements ActionListener {
     };
 
     private GameParticipant game = null;
-    private Thread gameStacheListener = null;
+    private Thread gameStateListener = null;
     private Server serv = null;
 
     /**
@@ -106,7 +105,7 @@ public class PokerUI implements ActionListener {
      */
     public void actionPerformed(ActionEvent act) {
         try {
-            System.out.println("Command received: " + act.getActionCommand());
+            System.out.println("Command: " + act.getActionCommand());
 
             // start a new game
             if ("new_game".equals(act.getActionCommand())) {
@@ -141,7 +140,7 @@ public class PokerUI implements ActionListener {
      */
     private void setMyFunctions() {
         try {
-            String name = "//localhost:1099/Compute";
+            String name = "//localhost:1099/Game";
             this.serv = (Server) Naming.lookup(name);
         } catch (Exception e) {
             System.err.println("Can't connect to game server.");
@@ -162,6 +161,7 @@ public class PokerUI implements ActionListener {
      *
      */
     private void stopGame() {
+
         if (this.game!=null) {
             try {
                 this.game.finishGame();
@@ -169,14 +169,16 @@ public class PokerUI implements ActionListener {
                 e.printStackTrace();
             }
             this.game = null;
+        }
 
+        if (this.gameStateListener !=null) {
             try {
-                this.gameStacheListener.interrupt();
-                this.gameStacheListener.join(10);
+                this.gameStateListener.interrupt();
+                this.gameStateListener.join(10);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            this.gameStacheListener = null;
+            this.gameStateListener = null;
         }
     }
 
@@ -186,8 +188,8 @@ public class PokerUI implements ActionListener {
     private void startGame() {
         try {
             this.game = serv.connectToGame();
-            this.gameStacheListener = new ListenerThread(this.game, this);
-            this.gameStacheListener.start();
+            this.gameStateListener = new ListenerThread(this.game, this);
+            this.gameStateListener.start();
         } catch (RemoteException e) {
             e.printStackTrace();
         }

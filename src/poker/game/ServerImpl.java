@@ -46,7 +46,6 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         }
 
         System.out.println("connected");
-        // TODO usunąć zależność kołową
         GameParticipant part = new GameParticipantImpl(game);
         game.addPlayer(part);
 
@@ -67,13 +66,13 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         if (System.getSecurityManager() == null) {
             System.setSecurityManager(new RMISecurityManager());
         }
-        String name = "//localhost:1099/Compute";
+        String name = "//localhost:1099/Game";
         try {
             Server game = new ServerImpl();
             Naming.rebind(name, game);
-            System.out.println("ComputeEngine ok");
+            System.out.println("Game server started");
         } catch (Exception e) {
-            System.err.println("ComputeEngine excep." + e.getMessage());
+            System.err.println("Problems with server." + e.getMessage());
             e.printStackTrace();
         }
     }
