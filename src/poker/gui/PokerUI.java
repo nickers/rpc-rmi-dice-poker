@@ -55,7 +55,8 @@ public class PokerUI implements ActionListener {
                         }
 
                         // can i throw dice again
-                        gui.throwDice.setEnabled(!state.player.acceptedRound);
+                        boolean throwsLeft = (state.roundsMax-state.player.roundNumber)>0;
+                        gui.throwDice.setEnabled(!state.player.acceptedRound && throwsLeft);
 
                         // round accepted (by user or automaticly)
                         gui.acceptRound.setEnabled(!state.player.acceptedRound);
