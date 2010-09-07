@@ -47,6 +47,7 @@ OBJS		= ./src/poker/game/Game.class \
 
 
 .java.class: $@
+	@mkdir -p $(OUTDIR)
 	$(JAVAC) $(FLAGS) -cp $(CLASSPATH) -d $(OUTDIR) $<
 
 
