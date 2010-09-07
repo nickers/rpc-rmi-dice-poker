@@ -1,0 +1,86 @@
+Tomasz Wsuł
+Indeks 80169
+2nickers@gmail.com
+
+-------------------------------------------------------------------------------
+-- Zadanie z RMI na laboratorium z Narzędzi Przetwarzania Rozproszonego (NPR).
+-------------------------------------------------------------------------------
+
+-------------------------------------------------------------------------------
+-- 1. Kompilacja
+-------------------------------------------------------------------------------
+
+Przygotowany jest plik Makefile, więc wystarczy wydać polecenie "make".
+
+
+-------------------------------------------------------------------------------
+-- 2. Uruchomienie
+-------------------------------------------------------------------------------
+
+Zostały przygotowane 3 pliki 'run-registry.sh', 'run-server.sh' oraz
+'run-client.sh'. Wystarczy je uruchomić. Pierwszy musi być uruchomiony rejestr,
+potem serwer i klienci.
+
+~:$ ./run-registry.sh &
+~:$ ./run-server.sh &
+~:$ ./run-client.sh &
+~:$ ./run-client.sh &
+
+
+Uruchomi to serwer z dwoma klientami. Po rozpoczęciu gry mamy 3 rzuty w trakcie
+których możemy wybierać które kości mają być ponownie rzucone. W tym celu
+klikamy na odpowiednią kość (JPushButton w górnej części ekranu gry).
+
+Kości są porównywane gdy obaj gracze zaakceptują wylosowany układ kości
+przyciskiem "OK". Nawet po wyczerpaniu puli oczekuje się akceptacji
+użytkownika, gdyż automatyczna akceptacja wprowadzała chaos  w rozgrywkę.
+Dodatkowo pierwszy rzut wykonywany jest automatycznie wszystkimi kościami.
+
+
+-------------------------------------------------------------------------------
+-- 3. Reguły gry
+-------------------------------------------------------------------------------
+
+Wygrywa gracz, który ma wyższy układ kości a w przypadku gdy obaj mają takie
+same ilość ilość oczek (liczona różnie dla każdego układu). Jeśli w ten sposób
+nie można ustalić zwycięzcy mamy remis. Zwycięzca dostaje 1 punkt, w razie
+remisu nikt nie dostaje punktu. Układy zostały skopiowane z minigry w kości
+z gry „Wiedźmin”.
+
+„Wyróżniamy następujące kombinacje kości:
+Para - Dwie kości o tej samej liczbie oczek;
+Dwie pary - Dwie pary kości o tej samej liczbie oczek;
+Trójka - Trzy kości o tej samej liczbie oczek;
+Mały strit - wszystkie liczby od 1 do 5;
+Duży strit - wszystkie liczby od 2 do 6;
+Full - Para + trójka;
+Kareta - Cztery kości o tej samej liczbie oczek;
+Poker - Wszystkie kości z tą samą liczbą oczek.”
+// Skopiowano z [http://crpg.iml.pl/wiedzmin/minigry/1884a]
+
+
+-------------------------------------------------------------------------------
+-- 4. Opis implementacji
+-------------------------------------------------------------------------------
+
+Krótkie opisy klas:
+
+poker.game.GameState - klasa do przenoszenia informacji o stanie rozgrywki do
+            klientów.
+poker.game.Server - serwer rozgrywki
+poker.game.Game - zdalna klasa rozgrywki - to tutaj są wykonywane wszelkie zmiany
+poker.game.GameParticipant - uczestnij rozgrywki (zdalna klasa)
+
+poker.game.resultTesters.* - klasy do testowania układów kości (para,strit...)
+
+poker.gui.PokerUI - interfejs użytkownika utworzony automatycznie i uzupełniony
+            o obsługę rozgrywki (wątek nasłuchujący informacji zwrotnych).
+
+
+Otrzymywanie informacji o zmianach:
+
+Wątek utworzony w PokerUI wywołuje funkcję GameParticipant::waitForGameStateChange()
+gdzie następuje zawieszenie wątku za pomocą Object::wait() w oczekiwaniu na zmianę
+stanu gry. Przy każdej zmiane stanu jest wywoływane Object::signalAll().
+
+
