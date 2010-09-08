@@ -9,6 +9,10 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
 
 import poker.game.GameState.GameParticipantState;
+import poker.game.exceptions.GameException;
+import poker.game.exceptions.InvalidDieNumberException;
+import poker.game.exceptions.InvalidDieValueException;
+import poker.game.exceptions.NoMoreThrowsException;
 import poker.game.resultTesters.*;
 
 /**
@@ -219,7 +223,11 @@ public class GameImpl extends UnicastRemoteObject implements Game {
                 Set<Integer> s = new TreeSet<Integer>();
                 for (int i=0; i<state.dice.length; i++)
                     s.add(i);
-                this.throwDice(player.get(), s);
+                try {
+                    this.throwDice(player.get(), s);
+                } catch (GameException e) {
+                    e.printStackTrace();
+                }
             } catch (NullPointerException e) {
                 System.err.println("Probably player disconnected.");
                 e.printStackTrace();
@@ -254,13 +262,20 @@ public class GameImpl extends UnicastRemoteObject implements Game {
      * @param dice
      * @throws RemoteException
      */
-    public void throwDice(GameParticipant player, Set<Integer> dice) throws RemoteException {
+    public void throwDice(GameParticipant player, Set<Integer> dice) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException {
+        GameParticipantState part = this.getParticipantState(player);
+        if (part.acceptedRound || !(part.roundNumber<this.gameState.roundsMax)) {
+            throw new NoMoreThrowsException();
+        }
+
         Random r = new Random();
         //int newDice[] = this.gameState.player.dice.clone();
         int newDice[] = this.getParticipantState(player).dice.clone();
         for (Integer dieNr : dice) {
-            if (dieNr<newDice.length) {
+            if (dieNr<newDice.length && dieNr>=0) {
                 newDice[dieNr] = r.nextInt(6)+1; // <1;6>
+            } else {
+                throw new InvalidDieNumberException();
             }
         }
 

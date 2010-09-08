@@ -1,5 +1,9 @@
 package poker.game;
 
+import poker.game.exceptions.InvalidDieNumberException;
+import poker.game.exceptions.InvalidDieValueException;
+import poker.game.exceptions.NoMoreThrowsException;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.server.Unreferenced;
@@ -35,7 +39,7 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         return this.gameState;
     }
 
-    public void throwDices(Set<Integer> dice) throws RemoteException {
+    public void throwDices(Set<Integer> dice) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException {
         game.throwDice(this, dice);
     }
 

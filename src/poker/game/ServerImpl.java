@@ -1,5 +1,7 @@
 package poker.game;
 
+import poker.game.exceptions.GameException;
+
 import java.rmi.Naming;
 import java.rmi.RMISecurityManager;
 import java.rmi.RemoteException;
@@ -53,7 +55,12 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
         for (int i=0; i<part.getGameState().diceAmount; i++) {
             set.add(i);
         }
-        part.throwDices(set);
+        try {
+            part.throwDices(set);
+        } catch (GameException e) {
+            e.printStackTrace();
+            return null;
+        }
 
         return part;
     }

@@ -1,5 +1,9 @@
 package poker.game;
 
+import poker.game.exceptions.InvalidDieNumberException;
+import poker.game.exceptions.InvalidDieValueException;
+import poker.game.exceptions.NoMoreThrowsException;
+
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -18,6 +22,6 @@ public interface Game extends Remote {
     GameState getGameState(GameParticipant player) throws RemoteException;
     void leaveGame(GameParticipant player) throws RemoteException;
     //void setPlayerDice(GameParticipant player, int dice[]) throws RemoteException;
-    void throwDice(GameParticipant player, Set<Integer> dice) throws RemoteException;
+    void throwDice(GameParticipant player, Set<Integer> dice) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException;
     void acceptRound(GameParticipant player) throws RemoteException;
 }

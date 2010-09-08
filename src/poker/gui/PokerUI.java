@@ -1,6 +1,7 @@
 package poker.gui;
 
 import poker.game.*;
+import poker.game.exceptions.GameException;
 
 import javax.swing.*;
 import javax.swing.border.*;
@@ -56,7 +57,7 @@ public class PokerUI implements ActionListener {
 
                         // can i throw dice again
                         boolean throwsLeft = (state.roundsMax-state.player.roundNumber)>0;
-                        gui.throwDice.setEnabled(!state.player.acceptedRound && throwsLeft);
+                        //gui.throwDice.setEnabled(!state.player.acceptedRound && throwsLeft);
 
                         // round accepted (by user or automaticly)
                         gui.acceptRound.setEnabled(!state.player.acceptedRound);
@@ -111,18 +112,24 @@ public class PokerUI implements ActionListener {
             // start a new game
             if ("new_game".equals(act.getActionCommand())) {
                 this.stopGame();
-                this.startGame();
+                if (!this.startGame()) {
+                        JOptionPane.showMessageDialog(this.mainPanel, "Błąd przy łączeniu się z nową grą.", "Błąd", JOptionPane.ERROR_MESSAGE);
+                }
             }
 
             // throw dice
             if ("throw_dice".equals(act.getActionCommand()) && game!=null) {
-                Set<Integer> dice = new TreeSet<Integer>();
-                JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
-                for (int i=0; i<d.length; i++){
-                    if (d[i].isSelected()) dice.add(i);
-                }
-                if (!dice.isEmpty()) {
-                    game.throwDices(dice);
+                try {
+                    Set<Integer> dice = new TreeSet<Integer>();
+                    JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
+                    for (int i=0; i<d.length; i++){
+                        if (d[i].isSelected()) dice.add(i);
+                    }
+                    if (!dice.isEmpty()) {
+                        game.throwDices(dice);
+                    }
+                } catch (GameException e) {
+                    JOptionPane.showMessageDialog(this.mainPanel, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
@@ -186,14 +193,18 @@ public class PokerUI implements ActionListener {
     /**
      *
      */
-    private void startGame() {
+    private boolean startGame() {
         try {
             this.game = serv.connectToGame();
+            if (this.game==null) {
+                return false;
+            }
             this.gameStateListener = new ListenerThread(this.game, this);
             this.gameStateListener.start();
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        return true;
     }
 
     /**
