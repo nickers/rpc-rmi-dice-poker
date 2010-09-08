@@ -1,8 +1,6 @@
 package poker.game;
 
-import poker.game.exceptions.InvalidDieNumberException;
-import poker.game.exceptions.InvalidDieValueException;
-import poker.game.exceptions.NoMoreThrowsException;
+import poker.game.exceptions.*;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -16,9 +14,9 @@ import java.util.Set;
  * To change this template use File | Settings | File Templates.
  */
 public interface GameParticipant extends Remote {
-    public GameState waitForGameStateChange() throws RemoteException;
-    public void throwDices(Set<Integer> dices) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException;
-    public void finishRound() throws RemoteException;
-    public void finishGame() throws RemoteException;
-    GameState getGameState() throws RemoteException;
+    public GameState waitForGameStateChange() throws RemoteException, GameAlreadyFinishedException;
+    public void throwDices(Set<Integer> dices) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException, GameAlreadyFinishedException, RoundFinishedException;
+    public void finishRound() throws RemoteException, GameAlreadyFinishedException, RoundFinishedException;
+    public void finishGame() throws RemoteException, GameAlreadyFinishedException;
+    GameState getGameState() throws RemoteException, GameAlreadyFinishedException;
 }

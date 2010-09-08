@@ -47,22 +47,21 @@ public class ServerImpl extends UnicastRemoteObject implements Server {
             }
         }
 
-        System.out.println("connected");
-        GameParticipant part = new GameParticipantImpl(game);
-        game.addPlayer(part);
-
-        Set<Integer> set = new TreeSet<Integer>();
-        for (int i=0; i<part.getGameState().diceAmount; i++) {
-            set.add(i);
-        }
         try {
+            System.out.println("connected");
+            GameParticipant part = new GameParticipantImpl(game);
+            game.addPlayer(part);
+
+            Set<Integer> set = new TreeSet<Integer>();
+            for (int i=0; i<part.getGameState().diceAmount; i++) {
+                set.add(i);
+            }
             part.throwDices(set);
+            return part;
         } catch (GameException e) {
             e.printStackTrace();
             return null;
         }
-
-        return part;
     }
 
     public int gamesCount() throws RemoteException {

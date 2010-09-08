@@ -84,6 +84,8 @@ public class PokerUI implements ActionListener {
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
+                } catch (GameException e) {
+                    JOptionPane.showMessageDialog(this.gui.mainPanel, e.getMessage(), "Wystąpił wyjątek", JOptionPane.ERROR_MESSAGE);
                 }
             }
         }
@@ -119,17 +121,13 @@ public class PokerUI implements ActionListener {
 
             // throw dice
             if ("throw_dice".equals(act.getActionCommand()) && game!=null) {
-                try {
-                    Set<Integer> dice = new TreeSet<Integer>();
-                    JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
-                    for (int i=0; i<d.length; i++){
-                        if (d[i].isSelected()) dice.add(i);
-                    }
-                    if (!dice.isEmpty()) {
-                        game.throwDices(dice);
-                    }
-                } catch (GameException e) {
-                    JOptionPane.showMessageDialog(this.mainPanel, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
+                Set<Integer> dice = new TreeSet<Integer>();
+                JToggleButton d[] = {this.die1, this.die2, this.die3, this.die4, this.die5};
+                for (int i=0; i<d.length; i++){
+                    if (d[i].isSelected()) dice.add(i);
+                }
+                if (!dice.isEmpty()) {
+                    game.throwDices(dice);
                 }
             }
 
@@ -140,6 +138,8 @@ public class PokerUI implements ActionListener {
             
         } catch (RemoteException e) {
             e.printStackTrace();
+        }  catch (GameException e) {
+            JOptionPane.showMessageDialog(this.mainPanel, e.getMessage(), "Błąd", JOptionPane.ERROR_MESSAGE);
         }
     }
 

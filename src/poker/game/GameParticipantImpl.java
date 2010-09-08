@@ -1,8 +1,6 @@
 package poker.game;
 
-import poker.game.exceptions.InvalidDieNumberException;
-import poker.game.exceptions.InvalidDieValueException;
-import poker.game.exceptions.NoMoreThrowsException;
+import poker.game.exceptions.*;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,7 +25,8 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         this.gameState = new GameState();
     }
 
-    public GameState waitForGameStateChange() throws RemoteException {
+    public GameState waitForGameStateChange() throws RemoteException, GameAlreadyFinishedException {
+        this.checkGameFinished();
         GameState gs = null;
         synchronized (this) {
             gs = this.gameState;
@@ -39,19 +38,24 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         return this.gameState;
     }
 
-    public void throwDices(Set<Integer> dice) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException {
+    public void throwDices(Set<Integer> dice) throws RemoteException, NoMoreThrowsException, InvalidDieNumberException, GameAlreadyFinishedException, RoundFinishedException {
+        this.checkGameFinished();
+        this.checkRoundAccepted();
         game.throwDice(this, dice);
     }
 
-    public void finishRound() throws RemoteException {
+    public void finishRound() throws RemoteException, GameAlreadyFinishedException, RoundFinishedException {
+        this.checkGameFinished();
         this.game.acceptRound(this);
     }
 
-    public void finishGame() throws RemoteException {
+    public void finishGame() throws RemoteException, GameAlreadyFinishedException {
+        this.checkGameFinished();
         this.game.leaveGame(this);
     }
 
-    public synchronized GameState getGameState() throws RemoteException {
+    public synchronized GameState getGameState() throws RemoteException, GameAlreadyFinishedException {
+        this.checkGameFinished();
         return this.gameState;
     }
 
@@ -59,9 +63,22 @@ public class GameParticipantImpl extends UnicastRemoteObject implements GamePart
         System.out.println("Game unreferenced!");   
         try {
             this.finishGame();
-        } catch (RemoteException e) {
+        } catch (Exception e) {
             // but who really cares?
             e.printStackTrace();
+        }
+    }
+
+    private void checkGameFinished() throws GameAlreadyFinishedException, RemoteException {
+        if (this.game==null || this.gameState.gameFinished) {
+            throw new GameAlreadyFinishedException();
+        }
+    }
+
+    private void checkRoundAccepted() throws RoundFinishedException, RemoteException {
+        if (this.gameState.player.acceptedRound) {
+            System.out.println("DD: " + this.gameState.player.acceptedRound);
+            throw new RoundFinishedException();
         }
     }
 }
